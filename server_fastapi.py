@@ -27,6 +27,7 @@ from urllib.parse import unquote
 from infer import infer, get_net_g, latest_version
 import tools.translate as trans
 from re_matching import cut_sent
+from fastapi.middleware.cors import CORSMiddleware
 
 
 from config import config
@@ -157,6 +158,23 @@ class Models:
 
 if __name__ == "__main__":
     app = FastAPI()
+
+    # 设置允许跨域访问的来源
+    origins = [
+        "http://localhost:5173",
+        "http://localhost:8000",
+        "https://example.com",
+    ]
+
+    # 添加 CORS 中间件
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=origins,
+        allow_credentials=True,
+        allow_methods=["*"],  # 允许所有 HTTP 方法
+        allow_headers=["*"],  # 允许所有 HTTP 头部
+    )
+    
     app.logger = logger
     # 挂载静态文件
     logger.info("开始挂载网页页面")
