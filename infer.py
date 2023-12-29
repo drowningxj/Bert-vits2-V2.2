@@ -7,6 +7,7 @@
     1.1.1-fix： 1.1.1版本训练的模型，但是在推理时使用dev的日语修复
     2.2：当前版本
 """
+import gc
 import torch
 import commons
 from text import cleaned_text_to_sequence, get_bert
@@ -248,6 +249,9 @@ def infer(
         ja_bert = ja_bert[:, :-2]
         en_bert = en_bert[:, :-2]
     with torch.no_grad():
+        if torch.cuda.is_available():
+            print("torch.cuda.empty_cache()...")
+            torch.cuda.empty_cache()
         x_tst = phones.to(device).unsqueeze(0)
         tones = tones.to(device).unsqueeze(0)
         lang_ids = lang_ids.to(device).unsqueeze(0)
@@ -279,8 +283,7 @@ def infer(
             .numpy()
         )
         del x_tst, tones, lang_ids, bert, x_tst_lengths, speakers, ja_bert, en_bert, emo
-        if torch.cuda.is_available():
-            torch.cuda.empty_cache()
+        gc.collect()
         return audio
 
 
