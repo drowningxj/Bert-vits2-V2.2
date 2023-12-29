@@ -284,6 +284,9 @@ def infer(
         )
         del x_tst, tones, lang_ids, bert, x_tst_lengths, speakers, ja_bert, en_bert, emo
         gc.collect()
+        if torch.cuda.is_available():
+            print("torch.cuda.empty_cache()...")
+            torch.cuda.empty_cache()
         return audio
 
 
